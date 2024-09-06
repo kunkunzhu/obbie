@@ -4,4 +4,4 @@
 
 (coming soon!)
 
-Built with Remix.JS, Prisma, Tailwind CSS, and NextUI 💌
+Built with Remix.JS, Prisma, MongoDB, Tailwind CSS, and NextUI 💌
