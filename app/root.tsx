@@ -15,6 +15,7 @@ import NavHeader from "./components/header/NavHeader";
 import SidebarNav from "./components/sidebar/SidebarNav";
 import { NextUIProvider } from "@nextui-org/react";
 import { cn } from "./lib/utils";
+import { AppLayout } from "./components/layout";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -35,7 +36,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="flex max-w-screen max-h-screen overflow-hidden font-text bg-background text-primary">
+      <body className="overflow-hidden font-text bg-background text-primary">
         <NextUIProvider>
           {children}
           <ScrollRestoration />
@@ -51,21 +52,8 @@ export default function App() {
   const navigation = useNavigation();
 
   return (
-    <div>
-      <NavHeader />
-      <div className="flex">
-        <div className="p-10 w-[20vw] flex flex-col justify-center">
-          <SidebarNav hobbies={exampleHobbiesData} />
-        </div>
-        <div
-          className={cn(
-            "w-[80vw] px-10 py-0 ml-25",
-            navigation.state === "loading" && "blur"
-          )}
-        >
-          <Outlet />
-        </div>
-      </div>
-    </div>
+    <AppLayout>
+      <Outlet />
+    </AppLayout>
   );
 }
