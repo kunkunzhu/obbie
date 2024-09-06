@@ -1,3 +1,78 @@
+/** @format */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --off-white: #fffcf9;
+    --off-black: #444444;
+    --grey: #d9d9d9;
+
+    --reading: #ffd3ba;
+    --coding: #cfdeff;
+    --art: #fffccf;
+    --writing: #aee2cd;
+
+    --square-size: 1rem;
+    --square-gap: 0.2rem;
+    --week-width: calc(var(--square-size) + var(--square-gap));
+  }
+}
+
+@layer components {
+  .months {
+    grid-area: months;
+    grid-template-columns: repeat(12, calc(var(--week-width) * 4));
+  }
+  .days {
+    grid-area: days;
+    grid-gap: var(--square-gap);
+    grid-template-rows: repeat(7, var(--square-size));
+    li:nth-child(odd) {
+      visibility: hidden;
+    }
+  }
+  .squares {
+    grid-area: squares;
+    grid-gap: var(--square-gap);
+    grid-template-rows: repeat(7, var(--square-size));
+    grid-auto-columns: var(--square-size);
+    grid-auto-rows: var(--square-size);
+
+    li {
+      border-radius: 100%;
+      background-color: #ebedf0;
+    }
+  }
+  .graph {
+    grid-template-areas: "empty months" "days squares";
+    grid-template-columns: auto 1fr;
+  }
+
+  .timeline-wrapper::before {
+    background-color: lightgrey;
+    content: "";
+    position: absolute;
+    margin-left: 46px;
+    width: 2px;
+    height: 100%;
+  }
+
+  .reading {
+    background-color: var(--reading) !important;
+  }
+  .coding {
+    background-color: var(--coding) !important;
+  }
+  .art {
+    background-color: var(--art) !important;
+  }
+  .writing {
+    background-color: var(--writing) !important;
+  }
+  .all {
+    background-color: black !important;
+  }
+}
