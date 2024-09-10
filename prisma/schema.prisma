@@ -16,7 +16,7 @@ datasource db {
 model User {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
-  userName  String
+  userName  String   @unique
   email     String   @unique
   password  String
 }
