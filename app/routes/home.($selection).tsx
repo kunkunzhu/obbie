@@ -1,12 +1,7 @@
 /** @format */
 
 // import TimelineTracker from "../components/tracker/tracker-timeline";
-import {
-  Outlet,
-  useLoaderData,
-  useParams,
-  useSearchParams,
-} from "@remix-run/react";
+import { Outlet, useLoaderData, useParams } from "@remix-run/react";
 
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { HobbyMutationI } from "~/types";
@@ -16,8 +11,6 @@ import { createHobbyEntry, getHobbyEntries } from "~/lib/data";
 import { getEmojiDict, timeTable } from "~/lib/example-data";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  // CREATE ACTION (move to more appropriate location later)
-
   const formData = await request.formData();
   const formEntry = Object.fromEntries(formData);
 
@@ -51,7 +44,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 export default function Home() {
-  const [searchParams] = useSearchParams();
   const { entries } = useLoaderData<typeof loader>();
   const emojiDict = getEmojiDict();
   const params = useParams();

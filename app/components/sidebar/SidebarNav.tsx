@@ -17,13 +17,13 @@ export default function SidebarNav({ hobbies }: SidebarNavI) {
       hobbiesArray.push(
         <NavLink
           key={index}
-          to={`/${hobby.name}`}
+          to={`/home/${hobby.name}`}
           className={({ isActive, isPending }) =>
             cn(
               "transition-all text-3xl flex justify-center rounded-full border-2 size-14 border-secondary",
               hobby.name,
               isActive && "!border-primary",
-              isPending && "brightness-75"
+              isPending && "brightness-110"
             )
           }
         >
@@ -36,12 +36,12 @@ export default function SidebarNav({ hobbies }: SidebarNavI) {
     hobbiesArray.push(
       <NavLink
         key={9}
-        to={`/star`}
+        to={`/home/star`}
         className={({ isActive, isPending }) =>
           cn(
             "transition-all text-3xl flex justify-center rounded-full border-2 size-14 border-secondary",
             isActive && "!border-primary",
-            isPending && "brightness-75"
+            isPending && "brightness-110"
           )
         }
       >
@@ -53,12 +53,12 @@ export default function SidebarNav({ hobbies }: SidebarNavI) {
     hobbiesArray.push(
       <NavLink
         key={10}
-        to={`/all`}
+        to={`/home/all`}
         className={({ isActive, isPending }) =>
           cn(
             "transition-all text-3xl flex justify-center rounded-full border-2 size-14 border-secondary",
             isActive && "!border-primary",
-            isPending && "brightness-75"
+            isPending && "brightness-110"
           )
         }
       >
