@@ -10,15 +10,27 @@ import {
   Input,
 } from "@nextui-org/react";
 import { ActionFunction, type ActionFunctionArgs } from "@remix-run/node";
-import { Form, json, useActionData, useSubmit } from "@remix-run/react";
-import { act, useEffect, useRef, useState } from "react";
-import { signup } from "~/utils/auth.server";
-import {
-  validateEmail,
-  validateName,
-  validatePassword,
-  validatePasswordConfirmation,
-} from "~/utils/validators.server";
+import { Form, useActionData } from "@remix-run/react";
+import { useForm } from "@rvf/remix";
+
+import { withZod } from "@rvf/zod";
+import { z } from "zod";
+
+const validator = withZod(
+  z
+    .object({
+      username: z.string().min(1, "Username cannot be empty."),
+      email: z.string().email().min(1, "Please enter a valid email address."),
+      password: z
+        .string()
+        .min(8, "Please ensure password contains at least 8 characters."),
+      passwordConfirm: z.string(),
+    })
+    .refine((data) => data.password === data.passwordConfirm, {
+      message: "Passwords do not match",
+      path: ["confirm"],
+    })
+);
 
 export const action: ActionFunction = async ({
   request,
@@ -27,46 +39,12 @@ export const action: ActionFunction = async ({
   console.log("FORM", formData);
   const formEntry = Object.fromEntries(formData);
   const { email, password, username, passwordCopy } = formEntry;
-
-  if (
-    typeof email != "string" ||
-    typeof password != "string" ||
-    typeof username != "string" ||
-    typeof passwordCopy != "string"
-  ) {
-    return json({ error: `Invalid Form Data` });
-  }
-
-  console.log("PASS");
-  const errors = {
-    email: validateEmail(email),
-    username: validateName(username),
-    password: validatePassword(password),
-    passwordCopy: validatePasswordConfirmation(password, passwordCopy),
-  };
-
-  console.log("ERRORS", errors);
-  if (Object.values(errors).some(Boolean)) {
-    return json({
-      errors,
-    });
-  }
-  return await signup({ email, password, username });
 };
 
 export default function Signup() {
   const actionData = useActionData<typeof action>();
-  console.log("ACTION", actionData);
-  const submit = useSubmit();
-  const firstLoad = useRef(true);
-
-  const [errors, setErrors] = useState(actionData?.errors || {});
-  const [formError, setFormError] = useState(actionData?.error || {});
-  const [formData, setFormData] = useState({
-    email: actionData?.fields?.email || "",
-    username: actionData?.fields?.username || "",
-    password: actionData?.fields?.password || "",
-    passwordCopy: actionData?.fields?.passwordCopy || "",
+  const form = useForm({
+    validator,
   });
 
   return (
@@ -76,38 +54,38 @@ export default function Signup() {
           <h2 className="px-2 text-2xl text-primary font-bold">Sign Up</h2>
         </CardHeader>
         <Divider />
-        <Form method="post">
+        <Form method="post" {...form.getFormProps()}>
           <CardBody className="flex flex-col gap-4 px-10">
             <Input
               label="Email"
               name="email"
               variant="underlined"
+              isInvalid={Boolean(form.error("email"))}
+              errorMessage={form.error("email")}
               isRequired
-              isInvalid={errors?.email != undefined}
-              errorMessage={errors?.email}
             />
             <Input
               label="Username"
               name="username"
               variant="underlined"
-              isInvalid={errors?.username != undefined}
-              errorMessage={errors?.username}
+              isInvalid={Boolean(form.error("username"))}
+              errorMessage={form.error("username")}
               isRequired
             />
             <Input
               label="Password"
               name="password"
               variant="underlined"
-              isInvalid={errors?.password != undefined}
-              errorMessage={errors?.password}
+              isInvalid={Boolean(form.error("password"))}
+              errorMessage={form.error("password")}
               isRequired
             />
             <Input
               label="Confirm Password"
-              name="passwordCopy"
+              name="passwordConfirm"
               variant="underlined"
-              isInvalid={errors?.passwordCopy != undefined}
-              errorMessage={errors?.passwordCopy}
+              isInvalid={Boolean(form.error("confirm"))}
+              errorMessage={form.error("confirm")}
               isRequired
             />
           </CardBody>
