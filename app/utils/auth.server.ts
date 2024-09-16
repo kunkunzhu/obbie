@@ -13,8 +13,8 @@ export async function requireUserId(
   const session = await getUserSession(request);
   const userId = session.get("userId");
   if (!userId || typeof userId !== "string") {
-    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
-    throw redirect(`/login?${searchParams}`);
+    // const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    throw redirect(`/login`);
   }
   return userId;
 }
@@ -30,20 +30,25 @@ async function getUserId(request: Request) {
   return userId;
 }
 
+export async function getUserById(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, userName: true },
+  });
+  return user;
+}
+
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
   if (typeof userId !== "string") {
     return null;
   }
 
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, email: true, userName: true },
-    });
-    return user;
-  } catch {
+  const user = getUserById(userId);
+  if (!user) {
     throw logout(request);
+  } else {
+    return user;
   }
 }
 
@@ -59,6 +64,7 @@ export async function logout(request: Request) {
 export async function signup(user: SignUpForm) {
   const exists = await prisma.user.count({ where: { email: user.email } });
   if (exists) {
+    console.log("");
     return json(
       { error: `User already exists with that email` },
       { status: 400 }

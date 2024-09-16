@@ -6,16 +6,20 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useNavigation,
 } from "@remix-run/react";
 import "./tailwind.css";
-import { hobbiesData } from "./lib/example-data";
-import { HobbyI } from "./types";
-import NavHeader from "./components/header/NavHeader";
-import SidebarNav from "./components/sidebar/SidebarNav";
 import { NextUIProvider } from "@nextui-org/react";
-import { cn } from "./lib/utils";
 import { AppLayout } from "./components/layout";
+import type { MetaFunction, LoaderFunction } from "@remix-run/node";
+
+export const meta: MetaFunction = () => [
+  {
+    charset: "utf-8",
+    title: "Obbie",
+    description: "show up to your side quests.",
+    viewport: "width=device-width,initial-scale=1",
+  },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -48,9 +52,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const exampleHobbiesData = hobbiesData as HobbyI[];
-  const navigation = useNavigation();
-
   return (
     <AppLayout>
       <Outlet />

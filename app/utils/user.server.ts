@@ -13,5 +13,6 @@ export const createUser = async (user: SignUpForm) => {
       userName: user.username,
     },
   });
+  console.log("NEW USER CREATED");
   return { id: newUser.id, email: user.email };
 };

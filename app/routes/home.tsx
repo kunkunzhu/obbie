@@ -12,7 +12,7 @@ export default function App() {
 
   return (
     <div className="flex">
-      <div className="p-10 w-[20vw] flex flex-col justify-center">
+      <div className="p-10 w-[20vw] flex flex-col justify-center relative">
         <SidebarNav hobbies={exampleHobbiesData} />
       </div>
       <div
