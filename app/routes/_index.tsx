@@ -6,7 +6,6 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  NextUIProvider,
 } from "@nextui-org/react";
 import { NavLink } from "@remix-run/react";
 

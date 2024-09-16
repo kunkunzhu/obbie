@@ -9,28 +9,19 @@ import {
   Divider,
   Input,
 } from "@nextui-org/react";
-import {
-  ActionFunction,
-  LoaderFunction,
-  redirect,
-  type ActionFunctionArgs,
-} from "@remix-run/node";
+import { ActionFunction, ActionFunctionArgs } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import { useForm, validationError } from "@rvf/remix";
 
 import { withZod } from "@rvf/zod";
 import { z } from "zod";
-import { getUser, signup } from "~/utils/auth.server";
-import { SignUpForm } from "~/utils/type.server";
-
-export const loader: LoaderFunction = async ({ request }) => {
-  return (await getUser(request)) ? redirect("/") : null;
-};
+import { signup } from "~/services/auth.server";
+import { UserRegistration } from "~/services/type.server";
 
 const validator = withZod(
   z
     .object({
-      username: z.string().min(1, "Username cannot be empty."),
+      username: z.string().min(1, "username cannot be empty."),
       email: z.string().email().min(1),
       password: z
         .string()
@@ -43,19 +34,20 @@ const validator = withZod(
     })
 );
 
-// export const action: ActionFunction = async ({
-//   request,
-// }: ActionFunctionArgs) => {
-//   const formData = await validator.validate(await request.formData());
-//   if (formData.error) return validationError(formData.error);
-//   const user = {
-//     email: formData.data.email as string,
-//     username: formData.data.username as string,
-//     password: formData.data.password as string,
-//   } as SignUpForm;
+export const action: ActionFunction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const formData = await validator.validate(await request.formData());
+  if (formData.error) return validationError(formData.error);
+  const user = {
+    email: formData.data.email as string,
+    username: formData.data.username as string,
+    password: formData.data.password as string,
+  } as UserRegistration;
 
-//   return await signup(user); // TODO : catch error for when user already exists
-// };
+  console.log("User:", user);
+  return await signup(user); // TODO : catch error for when user already exists
+};
 
 function SignupCard() {
   const form = useForm({
@@ -67,7 +59,7 @@ function SignupCard() {
         <h2 className="px-2 text-2xl text-primary font-bold">Sign Up</h2>
       </CardHeader>
       <Divider />
-      <Form method="post" action="/signup">
+      <Form method="post" action="/sign-up">
         <CardBody className="flex flex-col gap-4 px-10">
           <Input
             label="Email"
@@ -78,7 +70,7 @@ function SignupCard() {
             isRequired
           />
           <Input
-            label="Username"
+            label="username"
             name="username"
             variant="underlined"
             isInvalid={Boolean(form.error("username"))}
@@ -112,7 +104,7 @@ function SignupCard() {
   );
 }
 
-export default function Signup() {
+export default function SignUp() {
   return (
     <div className="justify-center items-center flex flex-col w-fsull h-full">
       <div className="-mt-40">

@@ -9,15 +9,33 @@ import {
   Divider,
   Input,
 } from "@nextui-org/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, json, NavLink, redirect } from "@remix-run/react";
-import { useState } from "react";
+import { getUserId } from "~/services/session.server";
+import { signin } from "~/services/auth.server";
+import { UserLogin } from "~/services/type.server";
 
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { getUser, login } from "~/utils/auth.server";
+// export async function loader({ request }: LoaderFunctionArgs) {
+//   const userId = await getUserId(request);
+//   if (userId) return redirect("/");
+//   return json({});
+// }
 
-export const loader: LoaderFunction = async ({ request }) => {
-  return (await getUser(request)) ? redirect("/") : null;
-};
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  // TODO : perform validation (as done with signup.tsx)
+  const user = {
+    email: email,
+    password: password,
+  } as UserLogin;
+
+  console.log("User:", user);
+
+  return await signin(user);
+}
 
 function SignInCard() {
   return (
@@ -29,7 +47,7 @@ function SignInCard() {
         </div>
       </CardHeader>
       <Divider />
-      <Form method="post" id="login-form" action="/login">
+      <Form method="post" id="signin-form" action="/sign-in">
         <CardBody className="flex flex-col gap-4 px-10">
           <Input label="Email" name="email" variant="underlined" isRequired />
           <Input
@@ -40,7 +58,7 @@ function SignInCard() {
           />
           <span className="text-xs opacity-75">
             Don't have an account yet?{" "}
-            <NavLink to="/signup" className="text-blue-500 underline">
+            <NavLink to="/sign-up" className="text-blue-500 underline">
               Sign up
             </NavLink>{" "}
             instead.
@@ -56,7 +74,7 @@ function SignInCard() {
   );
 }
 
-export default function Login() {
+export default function SignIn() {
   return (
     <div className="justify-center items-center flex flex-col w-full  h-full">
       <div className="-mt-40">
