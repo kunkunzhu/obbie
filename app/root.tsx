@@ -1,6 +1,7 @@
 /** @format */
 
 import {
+  json,
   Links,
   Meta,
   Outlet,
@@ -10,7 +11,8 @@ import {
 import "./tailwind.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { AppLayout } from "./components/layout";
-import type { MetaFunction, LoaderFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+// import { getUser } from "./services/session.server";
 
 export const meta: MetaFunction = () => [
   {
@@ -50,6 +52,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
+
+// export async function loader({ request }: LoaderFunctionArgs) {
+//   return json({
+//     user: await getUser(request),
+//   });
+// }
 
 export default function App() {
   return (
