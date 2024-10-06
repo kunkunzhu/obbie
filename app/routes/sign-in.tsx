@@ -9,35 +9,52 @@ import {
   Divider,
   Input,
 } from "@nextui-org/react";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, json, NavLink, redirect } from "@remix-run/react";
-import { getUserId } from "~/services/session.server";
+import { withZod } from "@rvf/zod";
+import { z } from "zod";
+import { ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
+import { Form, json, NavLink, redirect, useActionData } from "@remix-run/react";
+import { getUser } from "~/services/session.server";
 import { signin } from "~/services/auth.server";
 import { UserLogin } from "~/services/type.server";
+import { useForm, validationError } from "@rvf/remix";
+import { ActionData } from "~/types";
 
-// export async function loader({ request }: LoaderFunctionArgs) {
-//   const userId = await getUserId(request);
-//   if (userId) return redirect("/");
-//   return json({});
-// }
+const validator = withZod(
+  z.object({
+    email: z.string().email().min(1),
+    password: z.string().min(1, "Please enter a password"),
+  })
+);
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return (await getUser(request)) ? redirect("/home") : null;
+};
 
 export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const formData = await validator.validate(await request.formData());
+  if (formData.error) return validationError(formData.error);
 
-  // TODO : perform validation (as done with signup.tsx)
   const user = {
-    email: email,
-    password: password,
+    email: formData.data.email as string,
+    password: formData.data.password as string,
   } as UserLogin;
 
   console.log("User:", user);
+  const result = (await signin(user)) as ActionData;
 
-  return await signin(user);
+  if (result.error) {
+    return json<ActionData>({ error: result.error });
+  }
+
+  return result;
 }
 
 function SignInCard() {
+  const actionData = useActionData<ActionData>();
+  const form = useForm({
+    validator,
+  });
+
   return (
     <Card className="min-w-[400px] -mt-40">
       <CardHeader className="px-4 pt-4">
@@ -47,13 +64,22 @@ function SignInCard() {
         </div>
       </CardHeader>
       <Divider />
-      <Form method="post" id="signin-form" action="/sign-in">
+      <Form method="post" action="/sign-in">
         <CardBody className="flex flex-col gap-4 px-10">
-          <Input label="Email" name="email" variant="underlined" isRequired />
+          <Input
+            label="Email"
+            name="email"
+            variant="underlined"
+            isInvalid={Boolean(form.error("email"))}
+            errorMessage={form.error("email")}
+            isRequired
+          />
           <Input
             label="Password"
             name="password"
             variant="underlined"
+            isInvalid={Boolean(form.error("password"))}
+            errorMessage={form.error("password")}
             isRequired
           />
           <span className="text-xs opacity-75">
@@ -63,6 +89,9 @@ function SignInCard() {
             </NavLink>{" "}
             instead.
           </span>
+          {actionData?.error && (
+            <span className="text-xs text-warning">{actionData.error}</span>
+          )}
         </CardBody>
         <CardFooter className="px-4 pb-4 justify-end">
           <Button type="submit" color="primary">

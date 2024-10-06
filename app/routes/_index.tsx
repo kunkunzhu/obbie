@@ -7,11 +7,17 @@ import {
   CardFooter,
   CardHeader,
 } from "@nextui-org/react";
+import { LoaderFunction, redirect } from "@remix-run/node";
 import { NavLink } from "@remix-run/react";
+import { getUser } from "~/services/session.server";
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return (await getUser(request)) ? redirect("/home") : null;
+};
 
 function GetStartedCard() {
   return (
-    <Card className="-mt-40 py-4 min-h-[30vh]">
+    <Card className="-mt-80 py-4 min-h-[30vh]">
       <CardHeader className="px-4 pt-4 justify-center">
         <div className="flex gap-2">
           <img src="/icon.png" className="size-8" />
@@ -36,7 +42,7 @@ function GetStartedCard() {
 
 export default function AppPage() {
   return (
-    <div className="justify-center items-center flex flex-col w-full  h-full">
+    <div className="justify-center items-center flex flex-col w-full h-full">
       <GetStartedCard />
     </div>
   );

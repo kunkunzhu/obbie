@@ -9,14 +9,22 @@ import {
   Divider,
   Input,
 } from "@nextui-org/react";
-import { ActionFunction, ActionFunctionArgs } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import {
+  ActionFunction,
+  ActionFunctionArgs,
+  json,
+  LoaderFunction,
+  redirect,
+} from "@remix-run/node";
+import { Form, NavLink, useActionData } from "@remix-run/react";
 import { useForm, validationError } from "@rvf/remix";
 
 import { withZod } from "@rvf/zod";
 import { z } from "zod";
 import { signup } from "~/services/auth.server";
+import { getUser } from "~/services/session.server";
 import { UserRegistration } from "~/services/type.server";
+import { ActionData } from "~/types";
 
 const validator = withZod(
   z
@@ -34,6 +42,10 @@ const validator = withZod(
     })
 );
 
+export const loader: LoaderFunction = async ({ request }) => {
+  return (await getUser(request)) ? redirect("/home") : null;
+};
+
 export const action: ActionFunction = async ({
   request,
 }: ActionFunctionArgs) => {
@@ -46,15 +58,23 @@ export const action: ActionFunction = async ({
   } as UserRegistration;
 
   console.log("User:", user);
+  const result = (await signup(user)) as ActionData;
+
+  if (result.error) {
+    return json<ActionData>({ error: result.error });
+  }
+
   return await signup(user); // TODO : catch error for when user already exists
 };
 
 function SignupCard() {
+  const actionData = useActionData<ActionData>();
   const form = useForm({
     validator,
   });
+
   return (
-    <Card className="min-w-[400px]">
+    <Card className="min-w-[400px] -mt-40">
       <CardHeader>
         <h2 className="px-2 text-2xl text-primary font-bold">Sign Up</h2>
       </CardHeader>
@@ -93,6 +113,16 @@ function SignupCard() {
             errorMessage={form.error("confirm")}
             isRequired
           />
+          <span className="text-xs opacity-75">
+            Have an account?{" "}
+            <NavLink to="/sign-in" className="text-blue-500 underline">
+              Sign in
+            </NavLink>{" "}
+            instead.
+          </span>
+          {actionData?.error && (
+            <span className="text-xs text-warning">{actionData.error}</span>
+          )}
         </CardBody>
         <CardFooter className="px-4 pb-4 justify-end">
           <Button type="submit" color="primary">
