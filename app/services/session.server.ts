@@ -41,11 +41,12 @@ export async function getUser(request: Request) {
     const user = await getUserById(userId);
     return user;
   } catch {
-    throw logout(request);
+    return null;
   }
 }
 
-export async function logout(request: Request) {
+export async function signout(request: Request) {
+  console.log("SIGN OUT TRIGGERED");
   const session = await getUserSession(request);
   return redirect("/sign-in", {
     headers: {
@@ -54,26 +55,13 @@ export async function logout(request: Request) {
   });
 }
 
-export async function requireUserId(
-  request: Request
-  // redirectTo: string = new URL(request.url).pathname
-) {
+export async function requireUserId(request: Request) {
   const userId = await getUserId(request);
   if (!userId) {
-    // const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
     throw redirect("/sign-in");
   }
   return userId;
 }
-
-// export async function requireUser(request: Request) {
-//   const userId = await requireUserId(request);
-
-//   const user = await getUserById(userId);
-//   if (user) return user;
-
-//   throw await logout(request);
-// }
 
 export async function createUserSession({
   // request,

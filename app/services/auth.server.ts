@@ -1,6 +1,6 @@
 /** @format */
 
-import { json, redirect } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { prisma } from "./prisma.server";
 import { UserLogin, UserRegistration } from "./type.server";
 import { createUser } from "./user.server";
@@ -35,11 +35,11 @@ export async function signin({ email, password }: UserLogin) {
   if (!user) {
     const errorMsg = "The user with the given email does not exist.";
     console.log(errorMsg);
-    return json({ error: errorMsg }, { status: 400 });
+    return { error: errorMsg, status: 400 };
   } else if (!(await bcrypt.compare(password, user.password))) {
-    const errorMsg = "Incorrect login";
+    const errorMsg = "The password is incorrect.";
     console.log(errorMsg);
-    return json({ error: errorMsg }, { status: 400 });
+    return { error: errorMsg, status: 400 };
   }
 
   return createUserSession({ userId: user.id, redirectTo: "/home" });

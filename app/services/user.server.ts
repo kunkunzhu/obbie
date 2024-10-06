@@ -21,42 +21,10 @@ export const createUser = async (user: UserRegistration) => {
 };
 
 export async function getUserById(userId: string) {
-  const user = await prisma.user.findUnique({
+  const user = (await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, email: true, username: true },
-  });
+  })) as User;
   return user;
 }
-
-// export async function getUserById(id: User["id"]) {
-//   return prisma.user.findUnique({ where: { id } });
-// }
-
-// export async function getUserByEmail(email: User["email"]) {
-//   return prisma.user.findUnique({ where: { email } });
-// }
-
-// export async function deleteUserByEmail(email: User["email"]) {
-//   return prisma.user.delete({ where: { email } });
-// }
-
-// export async function verifysignin(email: User["email"], password: string) {
-//   const user = await prisma.user.findUnique({
-//     where: { email },
-//   });
-
-//   if (!user) {
-//     return null;
-//   }
-
-//   const isValid = await bcrypt.compare(password, user.password);
-
-//   if (!isValid) {
-//     return null;
-//   }
-
-//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   const { password: _password, ...userProfile } = user;
-
-//   return userProfile;
 // }
