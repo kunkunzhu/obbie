@@ -15,6 +15,7 @@ export default {
         background: "var(--off-white)",
         primary: "var(--off-black)",
         secondary: "var(--grey)",
+        warning: "var(--warning)",
       },
       fontFamily: {
         text: ['"Outfit"', ...defaultTheme.fontFamily.sans],
