@@ -1,5 +1,4 @@
 /** @format */
-
 import NavHeader from "./header/NavHeader";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {

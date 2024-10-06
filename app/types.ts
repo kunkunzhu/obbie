@@ -16,6 +16,10 @@ export interface HobbyMutationI {
   star: boolean;
 }
 
+export type ActionData = {
+  error?: string;
+};
+
 export interface HobbyEntryI extends HobbyMutationI {
   id: string;
 }

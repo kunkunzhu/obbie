@@ -15,10 +15,9 @@ interface TimelineTrackerI {
 interface TimelineEntryI {
   entry: HobbyEntryI;
   emoji: string;
-  key: number;
 }
 
-function TimelineEntry({ entry, emoji, key }: TimelineEntryI) {
+function TimelineEntry({ entry, emoji }: TimelineEntryI) {
   const { hobby, date } = entry;
 
   const cardClassName = hobby + "card";
@@ -31,7 +30,6 @@ function TimelineEntry({ entry, emoji, key }: TimelineEntryI) {
         cardClassName,
         "ml-20 bg-white border-2 px-10 py-6 border-grey rounded-xl flex flex-col gap-4 w-fit max-w-[60vw] drop-shadow-entry"
       )}
-      key={key}
     >
       <div className="absolute -left-16">{day}</div>
       <div className="flex align-middle gap-4">
@@ -68,7 +66,11 @@ export default function TimelineTracker({
 
   function renderEntry({ entry, idx }: { entry: HobbyEntryI; idx: number }) {
     const emoji = emojiDict[entry.hobby];
-    return <TimelineEntry key={idx} entry={entry} emoji={emoji} />;
+    return (
+      <div key={idx}>
+        <TimelineEntry entry={entry} emoji={emoji} />
+      </div>
+    );
   }
 
   return (
