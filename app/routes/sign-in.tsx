@@ -11,12 +11,17 @@ import {
 } from "@nextui-org/react";
 import { withZod } from "@rvf/zod";
 import { z } from "zod";
-import { ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
-import { Form, json, NavLink, redirect, useActionData } from "@remix-run/react";
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunction,
+  redirect,
+} from "@remix-run/node";
+import { Form, NavLink, useActionData } from "@remix-run/react";
 import { getUser } from "~/services/session.server";
 import { signin } from "~/services/auth.server";
 import { UserLogin } from "~/services/type.server";
-import { useForm, validationError } from "@rvf/remix";
+import { useForm, ValidatedForm, validationError } from "@rvf/remix";
 import { ActionData } from "~/types";
 
 const validator = withZod(
@@ -51,9 +56,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 function SignInCard() {
   const actionData = useActionData<ActionData>();
-  const form = useForm({
-    validator,
-  });
 
   return (
     <Card className="min-w-[400px] -mt-40">
@@ -64,41 +66,45 @@ function SignInCard() {
         </div>
       </CardHeader>
       <Divider />
-      <Form method="post" action="/sign-in">
-        <CardBody className="flex flex-col gap-4 px-10">
-          <Input
-            label="Email"
-            name="email"
-            variant="underlined"
-            isInvalid={Boolean(form.error("email"))}
-            errorMessage={form.error("email")}
-            isRequired
-          />
-          <Input
-            label="Password"
-            name="password"
-            variant="underlined"
-            isInvalid={Boolean(form.error("password"))}
-            errorMessage={form.error("password")}
-            isRequired
-          />
-          <span className="text-xs opacity-75">
-            Don't have an account yet?{" "}
-            <NavLink to="/sign-up" className="text-blue-500 underline">
-              Sign up
-            </NavLink>{" "}
-            instead.
-          </span>
-          {actionData?.error && (
-            <span className="text-xs text-warning">{actionData.error}</span>
-          )}
-        </CardBody>
-        <CardFooter className="px-4 pb-4 justify-end">
-          <Button type="submit" color="primary">
-            Log In
-          </Button>
-        </CardFooter>
-      </Form>
+      <ValidatedForm method="post" action="/sign-in" validator={validator}>
+        {(form) => (
+          <div>
+            <CardBody className="flex flex-col gap-4 px-10">
+              <Input
+                label="Email"
+                name="email"
+                variant="underlined"
+                isInvalid={Boolean(form.error("email"))}
+                errorMessage={form.error("email")}
+                isRequired
+              />
+              <Input
+                label="Password"
+                name="password"
+                variant="underlined"
+                isInvalid={Boolean(form.error("password"))}
+                errorMessage={form.error("password")}
+                isRequired
+              />
+              <span className="text-xs opacity-75">
+                Don't have an account yet?{" "}
+                <NavLink to="/sign-up" className="text-blue-500 underline">
+                  Sign up
+                </NavLink>{" "}
+                instead.
+              </span>
+              {actionData?.error && (
+                <span className="text-xs text-warning">{actionData.error}</span>
+              )}
+            </CardBody>
+            <CardFooter className="px-4 pb-4 justify-end">
+              <Button type="submit" color="primary">
+                Log In
+              </Button>
+            </CardFooter>
+          </div>
+        )}
+      </ValidatedForm>
     </Card>
   );
 }
