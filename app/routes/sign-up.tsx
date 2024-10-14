@@ -64,7 +64,7 @@ export const action: ActionFunction = async ({
     return json<ActionData>({ error: result.error });
   }
 
-  return await signup(user); // TODO : catch error for when user already exists
+  return await signup(user);
 };
 
 function SignupCard() {

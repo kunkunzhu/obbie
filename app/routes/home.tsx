@@ -1,6 +1,6 @@
 /** @format */
 
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
 import UserHeader from "~/components/auth/UserHeader";
 import SidebarNav from "~/components/sidebar/SidebarNav";
@@ -11,7 +11,9 @@ import { HobbyI } from "~/types";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request);
-  console.log("User", user);
+  if (user && !user.profileComplete) {
+    return redirect("/complete-profile");
+  }
   return { user: user };
 };
 

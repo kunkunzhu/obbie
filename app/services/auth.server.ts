@@ -64,5 +64,8 @@ export async function signup(user: UserRegistration) {
       { status: 400 }
     );
   }
-  return createUserSession({ userId: newUser.id, redirectTo: "/home" });
+  return createUserSession({
+    userId: newUser.id,
+    redirectTo: "/complete-profile",
+  });
 }
