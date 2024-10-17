@@ -11,7 +11,8 @@ import { HobbyI } from "~/types";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request);
-  if (user && !user.profileComplete) {
+
+  if (user && user.profileComplete == false) {
     return redirect("/complete-profile");
   }
   return { user: user };
