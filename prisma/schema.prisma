@@ -14,20 +14,23 @@ datasource db {
 }
 
 model User {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  username  String?   
-  email     String   @unique
-  password  String
-  profileComplete Boolean @default(false)
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt       DateTime @default(now())
+  username        String?
+  email           String   @unique
+  password        String
+  profileComplete Boolean  @default(false)
+  hobby           Hobby[]
 }
 
-// model Hobby {
-//   id      String @id @default(auto()) @map("_id") @db.ObjectId
-//   name    String @unique
-//   emoji   String 
-//   colour  String
-// }
+model Hobby {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String @unique
+  emoji  String
+  user   User   @relation(fields: [userId], references: [id])
+  // colour  String
+  userId String @db.ObjectId
+}
 
 // model Entry {
 //   id       String    @id @default(auto()) @map("_id") @db.ObjectId
