@@ -13,11 +13,23 @@ import {
   PopoverTrigger,
 } from "@nextui-org/react";
 import { MdCancel } from "react-icons/md";
-import { Form } from "@remix-run/react";
+import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { useState } from "react";
-import { HobbyI } from "~/types";
+import { ActionData, HobbyI } from "~/types";
+import {
+  ActionFunction,
+  ActionFunctionArgs,
+  json,
+  LoaderFunction,
+  redirect,
+} from "@remix-run/node";
+import {
+  addUserHobbies,
+  markUserProfileAsComplete,
+} from "~/services/user.server";
+import { getUserId } from "~/services/session.server";
 
 function AddHobby({
   addHobby,
@@ -162,6 +174,42 @@ function HobbyList({
   );
 }
 
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (!userId) {
+    return redirect("/sign-in");
+  }
+  console.log("USER", userId);
+  return { userId: userId };
+};
+
+export const action: ActionFunction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const formData = await request.formData();
+  const userId = formData.get("userId") as string;
+  const hobbiesString = formData.get("hobbies");
+
+  let hobbies: HobbyI[] = [];
+  if (typeof hobbiesString === "string") {
+    hobbies = JSON.parse(hobbiesString);
+  }
+
+  console.log("Hobbies:", hobbies);
+  console.log("User ID:", userId);
+
+  const addHobbiesRes = (await addUserHobbies(hobbies, userId)) as ActionData;
+  const markProfileAsCompleteRes = (await markUserProfileAsComplete(
+    userId
+  )) as ActionData;
+
+  if (addHobbiesRes.error || markProfileAsCompleteRes.error) {
+    return json<ActionData>({ error: addHobbiesRes.error });
+  }
+
+  return redirect("/home");
+};
+
 const sampleHobbyList: HobbyI[] = [
   {
     emoji: "📖",
@@ -182,7 +230,10 @@ const sampleHobbyList: HobbyI[] = [
 ];
 
 export default function CompleteProfile() {
-  const [hobbyList, updateHobbyList] = useState<HobbyI[]>([]);
+  const submit = useSubmit();
+  const { userId } = useLoaderData<typeof loader>();
+
+  const [hobbyList, updateHobbyList] = useState<HobbyI[]>(sampleHobbyList);
   const [addDialog, setAddDialog] = useState<boolean>(false);
 
   const hobbyListAdd = (hobby: HobbyI) => {
@@ -192,6 +243,15 @@ export default function CompleteProfile() {
   const hobbyListDelete = (hobby: HobbyI) => {
     const newHobbyList = hobbyList.filter((h) => h.name !== hobby.name);
     updateHobbyList(newHobbyList);
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("hobbies", JSON.stringify(hobbyList));
+    formData.append("userId", userId);
+
+    submit(formData, { method: "post", action: "/complete-profile" });
   };
 
   return (
@@ -213,7 +273,7 @@ export default function CompleteProfile() {
           </div>
         </CardHeader>
         <Divider />
-        <Form method="post" action="/complete-profile">
+        <Form onSubmit={handleSubmit}>
           <CardBody className="flex flex-col gap-4 px-10">
             <HobbyList hobbies={hobbyList} deleteHobby={hobbyListDelete} />
             <div className="flex justify-between gap-10">
