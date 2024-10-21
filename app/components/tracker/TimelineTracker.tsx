@@ -41,7 +41,8 @@ function TimelineEntry({ entry, emoji }: TimelineEntryI) {
           <div className="flex my-auto gap-2">
             {entry.projects.map((project, idx) => (
               <div
-                className={cn("h-6 px-2 text-white rounded-full", hobby)}
+                className={cn("h-6 px-2 text-white rounded-full")}
+                style={{ backgroundColor: hobby }}
                 key={idx}
               >
                 {project}

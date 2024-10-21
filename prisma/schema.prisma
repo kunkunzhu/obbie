@@ -28,7 +28,7 @@ model Hobby {
   name   String @unique
   emoji  String
   user   User   @relation(fields: [userId], references: [id])
-  // colour  String
+  color  String @default("#ffd3ba")
   userId String @db.ObjectId
 }
 

@@ -1,7 +1,6 @@
 /** @format */
 
 import {
-  Avatar,
   Button,
   Card,
   CardBody,
@@ -12,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@nextui-org/react";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import data from "@emoji-mart/data";
@@ -30,6 +30,7 @@ import {
   markUserProfileAsComplete,
 } from "~/services/user.server";
 import { getUserId } from "~/services/session.server";
+import { HexColorPicker } from "react-colorful";
 
 function AddHobby({
   addHobby,
@@ -41,8 +42,10 @@ function AddHobby({
   setClose: () => void;
 }) {
   const [emojiPicker, showEmojiPicker] = useState<Boolean>(false);
+  const [colorPicker, showColorPicker] = useState<Boolean>(false);
   const [emoji, setEmoji] = useState<string>("🌟");
   const [hobbyName, setHobbyName] = useState<string>("");
+  const [hobbyColor, setHobbyColor] = useState<string>("#aee2cd");
   const [error, setError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
 
@@ -56,7 +59,8 @@ function AddHobby({
     for (let i = 0; i < curHobbies.length; i++) {
       if (
         curHobbies[i].emoji == hobby.emoji ||
-        curHobbies[i].name == hobby.name
+        curHobbies[i].name == hobby.name ||
+        curHobbies[i].color == hobby.color
       ) {
         return false;
       }
@@ -67,6 +71,21 @@ function AddHobby({
   const openEmojiPicker = () => {
     setError(false);
     showEmojiPicker(true);
+    showColorPicker(false);
+  };
+
+  const openColorPicker = () => {
+    setError(false);
+    showColorPicker(true);
+    showEmojiPicker(false);
+  };
+
+  const closeEmojiPicker = () => {
+    showEmojiPicker(false);
+  };
+
+  const closeColorPicker = () => {
+    showColorPicker(false);
   };
 
   const handleCancel = () => {
@@ -86,6 +105,7 @@ function AddHobby({
     const hobby = {
       emoji: emoji,
       name: hobbyName,
+      color: hobbyColor,
     };
 
     const isUnique = checkHobbyExists(hobby);
@@ -116,18 +136,37 @@ function AddHobby({
           }}
         />
         <div
+          className="h-8 w-10 border-1 rounded-full cursor-pointer"
+          style={{ backgroundColor: hobbyColor }}
+          onClick={openColorPicker}
+        />
+        <div
           className="text-2xl hover:scale-125 transition-all cursor-pointer"
           onClick={openEmojiPicker}
         >
           {emoji}
         </div>
+
         {emojiPicker && (
-          <div className="absolute left-[375px]">
+          <div className="absolute left-[375px] border-2 pt-8 bg-white border-primary rounded-xl">
+            <IoIosCloseCircleOutline
+              className="absolute top-1 right-1 size-6 cursor-pointer"
+              onClick={closeEmojiPicker}
+            />
             <Picker
               data={data}
               onEmojiSelect={handleEmojiSelect}
               maxFrequentRows={0}
             />
+          </div>
+        )}
+        {colorPicker && (
+          <div className="absolute left-[375px] border-2 pt-8 bg-white border-primary rounded-xl">
+            <IoIosCloseCircleOutline
+              className="absolute top-1 right-1 size-6 cursor-pointer"
+              onClick={closeColorPicker}
+            />
+            <HexColorPicker color={hobbyColor} onChange={setHobbyColor} />
           </div>
         )}
       </div>
@@ -155,13 +194,18 @@ function HobbyList({
           key={index}
           className="flex flex-row p-2 items-center justify-between"
         >
-          <div className="flex flex-row gap-2 items-center ">
-            <div className="border-1 items-center justify-center flex rounded-full size-8 text-secondary">
+          <div className="flex flex-row gap-2 items-center">
+            <div className="items-center justify-center flex rounded-full size-8 text-secondary">
               {index + 1}
             </div>
-            <div className="flex gap-2 text-lg">
-              <div>{hobby.emoji}</div>
-              <div>{hobby.name}</div>
+            <div className="flex gap-2 text-lg items-center">
+              <div
+                className="rounded-full size-8 flex justify-center items-center border-1"
+                style={{ backgroundColor: hobby.color }}
+              >
+                {hobby.emoji}
+              </div>
+              <div className="truncate max-w-[250px]">{hobby.name}</div>
             </div>
           </div>
           <MdCancel
@@ -214,18 +258,22 @@ const sampleHobbyList: HobbyI[] = [
   {
     emoji: "📖",
     name: "reading",
+    color: "#ffd3ba",
   },
   {
     emoji: "📝",
     name: "writing",
+    color: "#cfdeff",
   },
   {
     emoji: "💻",
     name: "smol software",
+    color: "#fffccf",
   },
   {
     emoji: "🎨",
     name: "art",
+    color: "#aee2cd",
   },
 ];
 
@@ -268,7 +316,7 @@ export default function CompleteProfile() {
               focus on:
             </span>
             <span className="text-sm text-secondary">
-              (Please make sure each hobby has a unique name and emoji!)
+              (Please make sure each hobby has a unique name, emoji, and color!)
             </span>
           </div>
         </CardHeader>

@@ -64,6 +64,7 @@ export async function addUserHobbies(hobbies: HobbyI[], userId: string) {
       where: {
         name: hobby.name,
         emoji: hobby.emoji,
+        color: hobby.color,
         userId: userId,
       },
     });
@@ -74,6 +75,7 @@ export async function addUserHobbies(hobbies: HobbyI[], userId: string) {
         data: {
           name: hobby.name,
           emoji: hobby.emoji,
+          color: hobby.color,
           user: {
             connect: {
               id: userId,
@@ -95,4 +97,25 @@ export async function addUserHobbies(hobbies: HobbyI[], userId: string) {
   console.log("Hobbies successfully added!");
 
   return json({ status: 200 });
+}
+
+export async function getUserHobbies(userId: string) {
+  if (!userId) {
+    const errorMsg = "No user found.";
+    console.log(errorMsg);
+    return { error: errorMsg, status: 400 };
+  }
+  const hobbies = await prisma.hobby.findMany({
+    where: {
+      userId: userId,
+    },
+  });
+
+  if (!hobbies) {
+    const errorMsg = "No hobbies found for the user!";
+    console.log(errorMsg);
+    return { error: errorMsg, status: 400 };
+  }
+
+  return hobbies;
 }

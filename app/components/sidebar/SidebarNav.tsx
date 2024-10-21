@@ -7,7 +7,6 @@ import { cn } from "~/lib/utils";
 
 interface SidebarNavI {
   hobbies: HobbyI[];
-  // colorDict: any;
 }
 
 export default function SidebarNav({ hobbies }: SidebarNavI) {
@@ -21,11 +20,11 @@ export default function SidebarNav({ hobbies }: SidebarNavI) {
           className={({ isActive, isPending }) =>
             cn(
               "transition-all text-3xl flex justify-center rounded-full border-2 size-14 border-secondary",
-              hobby.name,
               isActive && "!border-primary",
               isPending && "brightness-110"
             )
           }
+          style={{ backgroundColor: hobby.color }}
         >
           <div className="hover:opacity-100 opacity-80 my-auto hover:scale-110 transition-all">
             {hobby.emoji}

@@ -10,10 +10,6 @@
     --off-black: #444444;
     --grey: #d9d9d9;
     --warning: #df3562;
-    --reading: #ffd3ba;
-    --coding: #cfdeff;
-    --art: #fffccf;
-    --writing: #aee2cd;
 
     --square-size: 1rem;
     --square-gap: 0.2rem;
@@ -60,18 +56,6 @@
     height: 100%;
   }
 
-  .reading {
-    background-color: var(--reading) !important;
-  }
-  .coding {
-    background-color: var(--coding) !important;
-  }
-  .art {
-    background-color: var(--art) !important;
-  }
-  .writing {
-    background-color: var(--writing) !important;
-  }
   .all {
     background-color: black !important;
   }
