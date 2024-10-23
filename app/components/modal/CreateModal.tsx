@@ -1,5 +1,6 @@
 /** @format */
 
+import { now } from "@internationalized/date";
 import {
   Button,
   Checkbox,
@@ -15,9 +16,8 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import { Form } from "@remix-run/react";
-import { now } from "@internationalized/date";
-import { HobbyI } from "~/types";
 import { FaStar } from "react-icons/fa";
+import { HobbyI } from "~/types";
 
 interface CreateModalProps {
   isOpen: boolean;

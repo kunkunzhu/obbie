@@ -1,11 +1,29 @@
 /** @format */
 
-import { DateI } from "../types";
-import { twMerge } from "tailwind-merge";
-import { clsx, type ClassValue } from "clsx";
-import { useMatches } from "@remix-run/react";
-import { useMemo } from "react";
 import { User } from "@prisma/client";
+import { useMatches } from "@remix-run/react";
+import { clsx, type ClassValue } from "clsx";
+import { useMemo } from "react";
+import { twMerge } from "tailwind-merge";
+import { DateI } from "../types";
+
+export const timeTable = {
+  months: [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ],
+  days: ["S", "M", "T", "W", "T", "F", "S"],
+};
 
 export function getDateI(date: string): DateI {
   return {

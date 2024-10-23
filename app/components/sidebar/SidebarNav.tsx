@@ -1,9 +1,9 @@
 /** @format */
 
-import { ReactNode } from "react";
 import { NavLink } from "@remix-run/react";
-import { HobbyI } from "~/types";
+import { ReactNode } from "react";
 import { cn } from "~/lib/utils";
+import { HobbyI } from "~/types";
 
 interface SidebarNavI {
   hobbies: HobbyI[];

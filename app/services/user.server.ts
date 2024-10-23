@@ -1,11 +1,11 @@
 /** @format */
 
-import bcrypt from "bcryptjs";
-import { prisma } from "./prisma.server";
 import type { User } from "@prisma/client";
-import { UserRegistration } from "./type.server";
-import { HobbyI } from "~/types";
 import { json } from "@remix-run/node";
+import bcrypt from "bcryptjs";
+import { HobbyI } from "~/types";
+import { prisma } from "./prisma.server";
+import { UserRegistration } from "./type.server";
 
 export type { User } from "@prisma/client";
 

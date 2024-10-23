@@ -1,20 +1,23 @@
 /** @format */
 
-// import TimelineTracker from "../components/tracker/tracker-timeline";
-import { Outlet, useLoaderData, useParams } from "@remix-run/react";
-import { useOutletContext } from "@remix-run/react";
+import type { Hobby, User } from "@prisma/client";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { HobbyDict, HobbyEntryI, HobbyEntryMutationI } from "~/types";
-import TimelineTracker from "~/components/tracker/TimelineTracker";
+import {
+  Outlet,
+  useLoaderData,
+  useOutletContext,
+  useParams,
+} from "@remix-run/react";
 import CalTracker from "~/components/tracker/CalTracker";
-import { timeTable } from "~/lib/example-data";
+import TimelineTracker from "~/components/tracker/TimelineTracker";
+import { timeTable } from "~/lib/utils";
 import {
   createEntry,
   getEntry,
   getStarredEntries,
 } from "~/services/entry.server";
-import type { User, Hobby } from "@prisma/client";
 import { requireUserId } from "~/services/session.server";
+import { HobbyDict, HobbyEntryI, HobbyEntryMutationI } from "~/types";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const userId = await requireUserId(request);

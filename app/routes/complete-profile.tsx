@@ -1,5 +1,7 @@
 /** @format */
 
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import {
   Button,
   Card,
@@ -11,13 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@nextui-org/react";
-import { IoIosCloseCircleOutline } from "react-icons/io";
-import { MdCancel } from "react-icons/md";
-import { Form, useLoaderData, useSubmit } from "@remix-run/react";
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
-import { useState } from "react";
-import { ActionData, HobbyI } from "~/types";
 import {
   ActionFunction,
   ActionFunctionArgs,
@@ -25,12 +20,17 @@ import {
   LoaderFunction,
   redirect,
 } from "@remix-run/node";
+import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { useState } from "react";
+import { HexColorPicker } from "react-colorful";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { MdCancel } from "react-icons/md";
+import { requireUserId } from "~/services/session.server";
 import {
   addUserHobbies,
   markUserProfileAsComplete,
 } from "~/services/user.server";
-import { requireUserId } from "~/services/session.server";
-import { HexColorPicker } from "react-colorful";
+import { ActionData, HobbyI } from "~/types";
 
 function AddHobby({
   addHobby,
