@@ -15,17 +15,20 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import { Form } from "@remix-run/react";
-import { hobbiesData } from "~/lib/example-data";
 import { now } from "@internationalized/date";
+import { HobbyI } from "~/types";
+import { FaStar } from "react-icons/fa";
 
-interface ModalProps {
+interface CreateModalProps {
   isOpen: boolean;
   onOpenChange: any;
+  hobbies: HobbyI[];
 }
 
-function CreateModalFormContent() {
+function CreateModalFormContent({ hobbies }: { hobbies: HobbyI[] }) {
   return (
     <ModalBody className="flex flex-col gap-4">
+      {/* TO DO: debug why the option below is not showing */}
       <Select
         variant="underlined"
         label="Hobby"
@@ -33,9 +36,17 @@ function CreateModalFormContent() {
         name="hobby"
         isRequired
       >
-        {hobbiesData.map((hobby) => (
+        {hobbies.map((hobby) => (
           <SelectItem key={hobby.name}>
-            {hobby.emoji}&thinsp;{hobby.name}
+            <div className="flex gap-2 text-lg items-center">
+              <div
+                className="rounded-full size-8 flex justify-center items-center"
+                style={{ backgroundColor: hobby.color }}
+              >
+                {hobby.emoji}
+              </div>
+              <div className="truncate max-w-[250px]">{hobby.name}</div>
+            </div>
           </SelectItem>
         ))}
       </Select>
@@ -60,14 +71,18 @@ function CreateModalFormContent() {
         defaultValue={now("America/New_York")}
         isRequired
       />
-      <Checkbox name="star" radius="full">
+      <Checkbox name="starred" value="starred" radius="full" icon={<FaStar />}>
         Is this a milestone?
       </Checkbox>
     </ModalBody>
   );
 }
 
-export function CreateModal({ isOpen, onOpenChange }: ModalProps) {
+export function CreateModal({
+  isOpen,
+  onOpenChange,
+  hobbies,
+}: CreateModalProps) {
   return (
     <Modal
       isOpen={isOpen}
@@ -81,7 +96,7 @@ export function CreateModal({ isOpen, onOpenChange }: ModalProps) {
               add an entry:
             </ModalHeader>
             <Form id="add-entry-form" method="post">
-              <CreateModalFormContent />
+              <CreateModalFormContent hobbies={hobbies} />
               <ModalFooter className="flex justify-end">
                 <Button type="submit" onPress={onClose} color="primary">
                   Submit
