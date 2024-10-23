@@ -1,13 +1,14 @@
 /** @format */
 
 import { ReactNode } from "react";
-import { HobbyEntryI } from "~/types";
-import { dateIntoYear } from "~/lib/utils";
+import { HobbyDict, HobbyEntryI } from "~/types";
+import { dateIntoYear, getDateI } from "~/lib/utils";
 
 interface CalTrackerI {
   months: string[];
   days: string[];
   entries: HobbyEntryI[];
+  hobbiesDict: HobbyDict;
   hobby: string;
 }
 
@@ -15,6 +16,7 @@ export default function CalTracker({
   months,
   days,
   entries,
+  hobbiesDict,
   hobby,
 }: CalTrackerI) {
   function renderTime(times: string[]): ReactNode[] {
@@ -25,20 +27,28 @@ export default function CalTracker({
     return timesArray;
   }
 
+  const color = hobby == "all" ? "#D9D9D9" : hobbiesDict[hobby].color;
+
   function renderSquares(entryDays: number[]) {
     let squares: ReactNode[] = [];
 
     for (let i = 1; i < 365; i++) {
-      // TO DO: make this more efficient
-
-      const entryDay = entryDays.includes(i + 1) ? hobby : "";
-
-      squares.push(<li key={i} className={entryDay}></li>);
+      squares.push(
+        <li
+          key={i}
+          style={{
+            backgroundColor: entryDays.includes(i + 1) ? color : "var(--grey)",
+          }}
+        ></li>
+      );
     }
     return squares;
   }
 
-  const entryDays = entries.map((entry) => dateIntoYear(entry.date));
+  const entryDays = entries.map((entry: HobbyEntryI) => {
+    const dateI = getDateI(entry.date);
+    return dateIntoYear(dateI);
+  });
 
   return (
     <div className="graph ml-6 rounded-lg inline-grid text-sm">

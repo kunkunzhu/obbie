@@ -1,48 +1,50 @@
 /** @format */
 
-import { HobbyEntryI } from "~/types";
+import { DateI, HobbyDict, HobbyEntryI, HobbyI } from "~/types";
 import { IoIosAdd } from "react-icons/io";
 import { useSearchParams } from "@remix-run/react";
-import { cn } from "~/lib/utils";
+import { cn, getDateI } from "~/lib/utils";
 import { useDisclosure } from "@nextui-org/react";
 import { CreateModal } from "../modal/CreateModal";
 
 interface TimelineTrackerI {
   entries: HobbyEntryI[];
-  emojiDict: any;
+  hobbiesDict: HobbyDict;
+  hobbies: HobbyI[];
 }
 
 interface TimelineEntryI {
   entry: HobbyEntryI;
-  emoji: string;
+  hobbiesDict: HobbyDict;
 }
 
-function TimelineEntry({ entry, emoji }: TimelineEntryI) {
-  const { hobby, date } = entry;
+function TimelineEntry({ entry, hobbiesDict }: TimelineEntryI) {
+  const { hobbyName, date } = entry;
+  const { emoji, color } = hobbiesDict[entry.hobbyName];
 
-  const cardClassName = hobby + "card";
+  const cardClassName = hobbyName + "card";
 
-  const day = date.day;
+  const dateI: DateI = getDateI(date);
+
+  const day = dateI.day;
 
   return (
     <div
-      className={cn(
-        cardClassName,
-        "ml-20 bg-white border-2 px-10 py-6 border-grey rounded-xl flex flex-col gap-4 w-fit max-w-[60vw] drop-shadow-entry"
-      )}
+      className="ml-20 bg-white border-2 px-10 py-6 border-grey rounded-xl flex flex-col gap-4 w-fit max-w-[60vw] drop-shadow-entry"
+      style={{ borderColor: color }}
     >
       <div className="absolute -left-16">{day}</div>
       <div className="flex align-middle gap-4">
         <div className="flex gap-2">
           <span className="text-2xl">{emoji}</span>
-          {entry.star && <span className="text-2xl">⭐</span>}
+          {entry.starred && <span className="text-2xl">⭐</span>}
         </div>
         {entry.projects && (
           <div className="flex my-auto gap-2">
             {entry.projects.map((project, idx) => (
               <div
-                className={cn("h-6 px-2 text-white rounded-full")}
-                style={{ backgroundColor: hobby }}
+                className={cn("h-6 px-2 rounded-full")}
+                style={{ backgroundColor: color }}
                 key={idx}
               >
                 {project}
@@ -60,23 +62,27 @@ function TimelineEntry({ entry, emoji }: TimelineEntryI) {
 
 export default function TimelineTracker({
   entries,
-  emojiDict,
+  hobbiesDict,
+  hobbies,
 }: TimelineTrackerI) {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   function renderEntry({ entry, idx }: { entry: HobbyEntryI; idx: number }) {
-    const emoji = emojiDict[entry.hobby];
     return (
       <div key={idx}>
-        <TimelineEntry entry={entry} emoji={emoji} />
+        <TimelineEntry entry={entry} hobbiesDict={hobbiesDict} />
       </div>
     );
   }
 
   return (
     <>
-      <CreateModal isOpen={isOpen} onOpenChange={onOpenChange} />
+      <CreateModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        hobbies={hobbies}
+      />
       <div className="timeline-wrapper overflow-x-visible overflow-y-scroll mt-12 w-full h-[60vh] border-t-2 border-t-grey">
         <div
           className="-mt-6 ml-6 cursor-pointer absolute bg-primary size-12 flex justify-center rounded-full"
