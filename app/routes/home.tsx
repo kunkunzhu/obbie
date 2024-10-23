@@ -7,6 +7,21 @@ import SidebarNav from "~/components/sidebar/SidebarNav";
 import { cn } from "~/lib/utils";
 import { getUser } from "~/services/session.server";
 import { getUserHobbies } from "~/services/user.server";
+import { HobbyDict, HobbyI } from "~/types";
+
+const dictFromHobbies = (hobbies: HobbyI[] | null) => {
+  let hobbiesDict: HobbyDict = {};
+  if (hobbies) {
+    for (let i = 0; i < hobbies.length; i++) {
+      const hobby = hobbies[i];
+      hobbiesDict[hobby.name] = {
+        emoji: hobby.emoji,
+        color: hobby.color,
+      };
+    }
+  }
+  return hobbiesDict;
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request);
@@ -20,21 +35,22 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   const hobbies = await getUserHobbies(user.id);
+  const hobbiesDict = dictFromHobbies(hobbies);
 
   console.log("Hobbies:", hobbies);
 
-  return { user: user, hobbies: hobbies };
+  return { user: user, hobbies: hobbies, hobbiesDict: hobbiesDict };
 };
 
 export default function App() {
-  const { user, hobbies } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
   const navigation = useNavigation();
 
   return (
     <div className="flex">
-      {user && <UserHeader user={user} />}
+      {data.user && <UserHeader user={data.user} />}
       <div className="p-10 w-[20vw] flex flex-col justify-center relative">
-        <SidebarNav hobbies={hobbies} />
+        <SidebarNav hobbies={data.hobbies} />
       </div>
       <div
         className={cn(
@@ -42,7 +58,7 @@ export default function App() {
           navigation.state === "loading" && "blur"
         )}
       >
-        <Outlet />
+        <Outlet context={data} />
       </div>
     </div>
   );
