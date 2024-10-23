@@ -7,6 +7,14 @@ import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 import { User } from "@prisma/client";
 
+export function getDateI(date: string): DateI {
+  return {
+    year: parseInt(date.substring(0, 4)),
+    month: parseInt(date.substring(5, 7)),
+    day: parseInt(date.substring(8, 10)),
+  };
+}
+
 export function dateIntoYear(date: DateI) {
   let dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
   let dayOfYear = dayCount[date.month] + date.day;
