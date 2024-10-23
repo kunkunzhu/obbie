@@ -3,18 +3,16 @@
 // import TimelineTracker from "../components/tracker/tracker-timeline";
 import { Outlet, useLoaderData, useParams } from "@remix-run/react";
 import { useOutletContext } from "@remix-run/react";
-import {
-  ActionFunctionArgs,
-  json,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { HobbyDict, HobbyEntryI, HobbyEntryMutationI } from "~/types";
 import TimelineTracker from "~/components/tracker/TimelineTracker";
 import CalTracker from "~/components/tracker/CalTracker";
-import { createHobbyEntry, getHobbyEntries } from "~/lib/data";
-import { getEmojiDict, timeTable } from "~/lib/example-data";
-import { createEntry, getEntry } from "~/services/entry.server";
+import { timeTable } from "~/lib/example-data";
+import {
+  createEntry,
+  getEntry,
+  getStarredEntries,
+} from "~/services/entry.server";
 import type { User, Hobby } from "@prisma/client";
 import { requireUserId } from "~/services/session.server";
 
@@ -45,10 +43,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
 
-  const entries =
-    params && params.selection
-      ? await getEntry(userId, params.selection)
-      : await getEntry(userId);
+  let entries;
+  if (params) {
+    entries =
+      params.selection && params.selection == "star"
+        ? await getStarredEntries(userId)
+        : await getEntry(userId, params.selection);
+  } else {
+    entries = await getEntry(userId);
+  }
 
   return { entries: entries };
 };
@@ -66,7 +69,6 @@ type LoaderDataType = {
 export default function Home() {
   const { user, hobbies, hobbiesDict } = useOutletContext<ContextType>();
   const { entries } = useLoaderData<LoaderDataType>();
-  const emojiDict = getEmojiDict();
   const params = useParams();
 
   return (

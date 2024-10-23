@@ -51,3 +51,20 @@ export async function getEntry(userId: string, query?: string | null) {
   console.log("Successfully fetched entries!", entries);
   return entries;
 }
+
+export async function getStarredEntries(userId: string) {
+  const entries = await prisma.entry.findMany({
+    where: {
+      starred: true,
+      userId: userId,
+    },
+  });
+
+  if (!entries) {
+    const errorMsg = "Failed to fetch entries";
+    console.log(errorMsg);
+    return null;
+  }
+  console.log("Successfully fetched entries!", entries);
+  return entries;
+}
