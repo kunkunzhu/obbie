@@ -29,7 +29,7 @@ import {
   addUserHobbies,
   markUserProfileAsComplete,
 } from "~/services/user.server";
-import { getUserId } from "~/services/session.server";
+import { requireUserId } from "~/services/session.server";
 import { HexColorPicker } from "react-colorful";
 
 function AddHobby({
@@ -219,10 +219,7 @@ function HobbyList({
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const userId = await getUserId(request);
-  if (!userId) {
-    return redirect("/sign-in");
-  }
+  const userId = await requireUserId(request);
   console.log("USER", userId);
   return { userId: userId };
 };

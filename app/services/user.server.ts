@@ -9,7 +9,7 @@ import { json } from "@remix-run/node";
 
 export type { User } from "@prisma/client";
 
-export const createUser = async (user: UserRegistration) => {
+export async function createUser(user: UserRegistration) {
   const passwordHash = await bcrypt.hash(user.password, 10);
   const newUser = await prisma.user.create({
     data: {
@@ -20,7 +20,7 @@ export const createUser = async (user: UserRegistration) => {
   });
   console.log("NEW USER CREATED");
   return { id: newUser.id, email: user.email };
-};
+}
 
 export async function getUserById(userId: string) {
   const user = (await prisma.user.findUnique({
@@ -100,11 +100,6 @@ export async function addUserHobbies(hobbies: HobbyI[], userId: string) {
 }
 
 export async function getUserHobbies(userId: string) {
-  if (!userId) {
-    const errorMsg = "No user found.";
-    console.log(errorMsg);
-    return { error: errorMsg, status: 400 };
-  }
   const hobbies = await prisma.hobby.findMany({
     where: {
       userId: userId,
@@ -114,7 +109,7 @@ export async function getUserHobbies(userId: string) {
   if (!hobbies) {
     const errorMsg = "No hobbies found for the user!";
     console.log(errorMsg);
-    return { error: errorMsg, status: 400 };
+    return null;
   }
 
   return hobbies;
