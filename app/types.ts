@@ -6,21 +6,19 @@ export interface DateI {
   day: number;
 }
 
-export interface HobbyMutationI {
-  hobby: string;
+export interface HobbyEntryMutationI {
+  hobbyName: string;
   description?: string;
   projects?: string[];
-  pictureURL?: string;
-  date: DateI;
-  dateStr: string;
-  star: boolean;
+  date: string;
+  starred: boolean;
 }
 
 export type ActionData = {
   error?: string;
 };
 
-export interface HobbyEntryI extends HobbyMutationI {
+export interface HobbyEntryI extends HobbyEntryMutationI {
   id: string;
 }
 
@@ -33,4 +31,13 @@ export interface HobbyI {
 export type SiteConfig = {
   name: string;
   description: string;
+};
+
+type HobbyDictVal = {
+  emoji: string;
+  color: string;
+};
+
+export type HobbyDict = {
+  [name: string]: HobbyDictVal;
 };
