@@ -2,10 +2,11 @@
 
 import { useDisclosure } from "@nextui-org/react";
 import { IoIosAdd } from "react-icons/io";
-import { cn, getDateI } from "~/lib/utils";
+import { cn, getDateI, timeTable } from "~/lib/utils";
 import { DateI, HobbyDict, HobbyEntryI, HobbyI } from "~/types";
 import { CreateModal } from "../modal/CreateModal";
 import { FaTrash } from "react-icons/fa";
+import { ReactNode } from "react";
 
 interface TimelineTrackerI {
   entries: HobbyEntryI[];
@@ -17,6 +18,8 @@ interface TimelineEntryI {
   entry: HobbyEntryI;
   hobbiesDict: HobbyDict;
 }
+
+type MonthlyEntriesI = { [month: string]: HobbyEntryI[] };
 
 function TimelineEntry({ entry, hobbiesDict }: TimelineEntryI) {
   const { date } = entry;
@@ -76,6 +79,37 @@ export default function TimelineTracker({
     );
   }
 
+  function renderEntries({ entries }: { entries: HobbyEntryI[] }) {
+    const entryByMonthArray: ReactNode[] = [];
+    const entriesByMonth: MonthlyEntriesI = {};
+    entries.forEach((entry: HobbyEntryI) => {
+      const entryDate = getDateI(entry.date);
+      const entryMonth = timeTable.months[entryDate.month - 1];
+      if (!entriesByMonth[entryMonth]) {
+        {
+          entriesByMonth[entryMonth] = [];
+        }
+      }
+      entriesByMonth[entryMonth].push(entry);
+    });
+
+    for (const [month, entries] of Object.entries(entriesByMonth)) {
+      entryByMonthArray.push(
+        <div className="flex flex-col w-full">
+          <div className="flex flex-col gap-4">
+            {entries.map((entry, idx) => renderEntry({ entry, idx }))}
+          </div>
+          <div className="flex">
+            <div className="font-semibold text-xl">{month}</div>
+            <div className="w-[100vw] ml-3 mt-4 border-b-1 h-0"></div>
+          </div>
+        </div>
+      );
+    }
+
+    return entryByMonthArray;
+  }
+
   return (
     <>
       <CreateModal
@@ -92,8 +126,8 @@ export default function TimelineTracker({
         </div>
         <div className="my-12 flex relative">
           {entries.length > 0 ? (
-            <div className="flex flex-col gap-6">
-              {entries.map((entry, idx) => renderEntry({ entry, idx }))}
+            <div className="flex flex-col gap-4">
+              {renderEntries({ entries })}
             </div>
           ) : (
             <div className="mx-auto my-0">

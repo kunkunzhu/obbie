@@ -41,6 +41,11 @@ export async function getEntry(userId: string, query?: string | null) {
       hobbyName: hobbyName,
       userId: userId,
     },
+    orderBy: [
+      {
+        date: "desc",
+      },
+    ],
   });
 
   if (!entries) {
