@@ -25,6 +25,7 @@ import { useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
+import { sampleHobbyList } from "~/lib/sample-data";
 import { requireUserId } from "~/services/session.server";
 import {
   addUserHobbies,
@@ -250,29 +251,6 @@ export const action: ActionFunction = async ({
 
   return redirect("/home");
 };
-
-const sampleHobbyList: HobbyI[] = [
-  {
-    emoji: "📖",
-    name: "reading",
-    color: "#ffd3ba",
-  },
-  {
-    emoji: "📝",
-    name: "writing",
-    color: "#cfdeff",
-  },
-  {
-    emoji: "💻",
-    name: "smol software",
-    color: "#fffccf",
-  },
-  {
-    emoji: "🎨",
-    name: "art",
-    color: "#aee2cd",
-  },
-];
 
 export default function CompleteProfile() {
   const submit = useSubmit();

@@ -1,11 +1,11 @@
 /** @format */
 
 import { useDisclosure } from "@nextui-org/react";
-import { useSearchParams } from "@remix-run/react";
 import { IoIosAdd } from "react-icons/io";
 import { cn, getDateI } from "~/lib/utils";
 import { DateI, HobbyDict, HobbyEntryI, HobbyI } from "~/types";
 import { CreateModal } from "../modal/CreateModal";
+import { FaTrash } from "react-icons/fa";
 
 interface TimelineTrackerI {
   entries: HobbyEntryI[];
@@ -19,10 +19,8 @@ interface TimelineEntryI {
 }
 
 function TimelineEntry({ entry, hobbiesDict }: TimelineEntryI) {
-  const { hobbyName, date } = entry;
+  const { date } = entry;
   const { emoji, color } = hobbiesDict[entry.hobbyName];
-
-  const cardClassName = hobbyName + "card";
 
   const dateI: DateI = getDateI(date);
 
@@ -30,9 +28,12 @@ function TimelineEntry({ entry, hobbiesDict }: TimelineEntryI) {
 
   return (
     <div
-      className="ml-20 bg-white border-2 px-10 py-6 border-grey rounded-xl flex flex-col gap-4 w-fit max-w-[60vw] drop-shadow-entry"
+      className="ml-20 bg-white border-2 px-10 hover:pb-12 group transition-all py-6 border-grey rounded-xl flex flex-col gap-4 w-fit max-w-[60vw] drop-shadow-entry"
       style={{ borderColor: color }}
     >
+      <div className="hidden group-hover:flex opacity-50 w-8 gap-2 absolute bottom-4 right-4">
+        <FaTrash className="cursor-pointer" />
+      </div>
       <div className="absolute -left-16">{day}</div>
       <div className="flex align-middle gap-4">
         <div className="flex gap-2">
@@ -65,7 +66,6 @@ export default function TimelineTracker({
   hobbiesDict,
   hobbies,
 }: TimelineTrackerI) {
-  const [searchParams, setSearchParams] = useSearchParams();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   function renderEntry({ entry, idx }: { entry: HobbyEntryI; idx: number }) {
