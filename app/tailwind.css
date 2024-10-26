@@ -20,7 +20,7 @@
 @layer components {
   .months {
     grid-area: months;
-    grid-template-columns: repeat(12, calc(var(--week-width) * 4));
+    grid-template-columns: repeat(12, calc(var(--week-width) * 4.2));
   }
   .days {
     grid-area: days;

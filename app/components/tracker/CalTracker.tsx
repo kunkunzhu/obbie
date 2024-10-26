@@ -6,7 +6,6 @@ import { HobbyDict, HobbyEntryI } from "~/types";
 
 interface CalTrackerI {
   months: string[];
-  days: string[];
   entries: HobbyEntryI[];
   hobbiesDict: HobbyDict;
   hobby: string;
@@ -14,7 +13,6 @@ interface CalTrackerI {
 
 export default function CalTracker({
   months,
-  days,
   entries,
   hobbiesDict,
   hobby,
@@ -38,7 +36,7 @@ export default function CalTracker({
         <li
           key={i}
           style={{
-            backgroundColor: entryDays.includes(i + 1) ? color : "var(--grey)",
+            backgroundColor: entryDays.includes(i) ? color : "var(--grey)",
           }}
         ></li>
       );
@@ -53,11 +51,8 @@ export default function CalTracker({
 
   return (
     <div className="graph ml-6 rounded-lg inline-grid text-sm">
-      <ul className="months lowercase ml-20 mb-2 grid">{renderTime(months)}</ul>
-      <ul className="days text-center grid uppercase p-4 -mr-6">
-        {renderTime(days)}
-      </ul>
-      <ul className="squares grid grid-flow-col rounded-lg border-2 border-grey p-4 ml-6">
+      <ul className="months ml-16 mb-2 grid">{renderTime(months)}</ul>
+      <ul className="squares grid grid-flow-col rounded-lg border-2 bg-white border-grey p-4 ml-6">
         {renderSquares(entryDays)}
       </ul>
     </div>

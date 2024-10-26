@@ -80,7 +80,6 @@ export default function Home() {
         <div>
           <CalTracker
             months={timeTable.months}
-            days={timeTable.days}
             entries={entries}
             hobbiesDict={hobbiesDict}
             hobby={params.selection ? params.selection : "all"}
