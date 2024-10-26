@@ -70,7 +70,7 @@ type LoaderDataType = {
 };
 
 export default function Home() {
-  const { user, hobbies, hobbiesDict } = useOutletContext<ContextType>();
+  const { hobbies, hobbiesDict } = useOutletContext<ContextType>();
   const { entries } = useLoaderData<LoaderDataType>();
   const params = useParams();
 

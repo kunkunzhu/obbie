@@ -26,7 +26,7 @@ export default function CalTracker({
   }
 
   const color =
-    hobby == "all" || hobby == "star" ? "#D9D9D9" : hobbiesDict[hobby].color;
+    hobby == "all" || hobby == "star" ? "black" : hobbiesDict[hobby].color;
 
   function renderSquares(entryDays: number[]) {
     let squares: ReactNode[] = [];
