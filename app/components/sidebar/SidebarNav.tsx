@@ -1,7 +1,7 @@
 /** @format */
 
 import { NavLink } from "@remix-run/react";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { cn } from "~/lib/utils";
 import { HobbyI } from "~/types";
 
@@ -9,68 +9,92 @@ interface SidebarNavI {
   hobbies: HobbyI[];
 }
 
+interface SidebarNavItemI {
+  key: number;
+  name: string;
+  hobbyType: string;
+  color: string;
+  emoji: string;
+}
+
+function SidebarNavItem({
+  key,
+  name,
+  hobbyType,
+  color,
+  emoji,
+}: SidebarNavItemI) {
+  const [isHovered, setIsHovered] = useState(false);
+  let redirect = "/home/";
+  if (hobbyType) {
+    redirect = redirect.concat(hobbyType);
+  }
+
+  return (
+    <NavLink
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      key={key}
+      to={redirect}
+      className={({ isActive, isPending }) =>
+        cn(
+          "transition-all bg-background text-2xl border-b-black flex justify-center rounded-t-xl border-t-2 border-x-2 p-1 border-secondary",
+          !(isActive || isPending) && "border-b-2"
+        )
+      }
+    >
+      {({ isActive, isPending }) => (
+        <div
+          className="my-auto flex gap-2 transition-all rounded-xl px-6 py-1"
+          style={{
+            backgroundColor:
+              (isActive || isHovered) && !isPending ? color : "transparent",
+          }}
+        >
+          <span>{emoji}</span>
+          <span style={{ display: isActive ? "block" : "none" }}>{name}</span>
+        </div>
+      )}
+    </NavLink>
+  );
+}
+
 export default function SidebarNav({ hobbies }: SidebarNavI) {
   const renderHobbies = (hobbies: HobbyI[]): ReactNode[] => {
     let hobbiesArray: ReactNode[] = [];
     hobbies.map((hobby, index) => {
       hobbiesArray.push(
-        <NavLink
+        <SidebarNavItem
           key={index}
-          to={`/home/${hobby.name}`}
-          className={({ isActive, isPending }) =>
-            cn(
-              "transition-all text-3xl flex justify-center rounded-full border-2 size-14 border-secondary",
-              isActive && "!border-primary",
-              isPending && "brightness-110"
-            )
-          }
-          style={{ backgroundColor: hobby.color }}
-        >
-          <div className="hover:opacity-100 opacity-80 my-auto hover:scale-110 transition-all">
-            {hobby.emoji}
-          </div>
-        </NavLink>
+          name={hobby.name}
+          hobbyType={hobby.name}
+          color={hobby.color}
+          emoji={hobby.emoji}
+        />
       );
     });
-    hobbiesArray.push(
-      <NavLink
+    hobbiesArray.push([
+      <SidebarNavItem
         key={9}
-        to={`/home/star`}
-        className={({ isActive, isPending }) =>
-          cn(
-            "transition-all text-3xl flex justify-center rounded-full border-2 size-14 border-secondary",
-            isActive && "!border-primary",
-            isPending && "brightness-110"
-          )
-        }
-      >
-        <div className="hover:opacity-100 opacity-80 my-auto hover:scale-110 transition-all">
-          ⭐
-        </div>
-      </NavLink>
-    );
-    hobbiesArray.push(
-      <NavLink
+        name="star"
+        hobbyType="star"
+        color="transparent"
+        emoji="⭐"
+      />,
+      <SidebarNavItem
         key={10}
-        to={`/home/all`}
-        className={({ isActive, isPending }) =>
-          cn(
-            "transition-all text-3xl flex justify-center rounded-full border-2 size-14 border-secondary",
-            isActive && "!border-primary",
-            isPending && "brightness-110"
-          )
-        }
-      >
-        <div className="hover:opacity-100 opacity-80 my-auto hover:scale-110 transition-all">
-          ⚪
-        </div>
-      </NavLink>
-    );
+        name=":)"
+        hobbyType="all"
+        color="transparent"
+        emoji="⚪"
+      />,
+    ]);
+
     return hobbiesArray;
   };
 
   return (
-    <div className="flex flex-col-reverse gap-4 mx-auto my-0">
+    <div className="flex flex-row-reverse justify-end ml-20 p-4 pb-0 gap-1">
       {renderHobbies(hobbies)}
     </div>
   );

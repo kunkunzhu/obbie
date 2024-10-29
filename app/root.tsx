@@ -1,7 +1,6 @@
 /** @format */
 
 import {
-  json,
   Links,
   Meta,
   Outlet,
@@ -11,8 +10,7 @@ import {
 import "./tailwind.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { AppLayout } from "./components/layout";
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-// import { getUser } from "./services/session.server";
+import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => [
   {
@@ -42,7 +40,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="overflow-hidden font-text bg-background text-primary">
+      <body className="overflow-hidden font-text text-primary">
         <NextUIProvider>
           {children}
           <ScrollRestoration />
@@ -52,12 +50,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
-// export async function loader({ request }: LoaderFunctionArgs) {
-//   return json({
-//     user: await getUser(request),
-//   });
-// }
 
 export default function App() {
   return (

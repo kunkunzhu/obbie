@@ -47,17 +47,10 @@ export default function App() {
   const navigation = useNavigation();
 
   return (
-    <div className="flex">
+    <div>
       {data.user && <UserHeader user={data.user} />}
-      <div className="p-10 w-[20vw] flex flex-col justify-center relative">
-        <SidebarNav hobbies={data.hobbies} />
-      </div>
-      <div
-        className={cn(
-          "w-[80vw] px-10 py-0 ml-25",
-          navigation.state === "loading" && "blur"
-        )}
-      >
+      <SidebarNav hobbies={data.hobbies} />
+      <div className={cn(navigation.state === "loading" && "blur")}>
         <Outlet context={data} />
       </div>
     </div>

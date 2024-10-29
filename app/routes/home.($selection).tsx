@@ -75,8 +75,8 @@ export default function Home() {
   const params = useParams();
 
   return (
-    <div>
-      <div id="pt-10 pb-20" className="max-h-[25vh]">
+    <div className="bg-background border-t-2 -mt-[2px] w-full p-10">
+      <div className="max-h-[25vh]">
         <div>
           <CalTracker
             months={timeTable.months}
@@ -86,7 +86,7 @@ export default function Home() {
           />
         </div>
       </div>
-      <div id="pt-10 pb-20" className="max-h-[65vh]">
+      <div className="max-h-[65vh] ml-20">
         <TimelineTracker
           entries={entries}
           hobbiesDict={hobbiesDict}
