@@ -5,7 +5,7 @@ import { useMatches } from "@remix-run/react";
 import { clsx, type ClassValue } from "clsx";
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
-import { DateI } from "../types";
+import { DateI, HobbyDict, HobbyI } from "../types";
 
 export const timeTable = {
   months: [
@@ -86,3 +86,17 @@ export function useUser(): User {
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
+
+export const dictFromHobbies = (hobbies: HobbyI[] | null) => {
+  let hobbiesDict: HobbyDict = {};
+  if (hobbies) {
+    for (let i = 0; i < hobbies.length; i++) {
+      const hobby = hobbies[i];
+      hobbiesDict[hobby.name] = {
+        emoji: hobby.emoji,
+        color: hobby.color,
+      };
+    }
+  }
+  return hobbiesDict;
+};

@@ -3,25 +3,10 @@
 import { LoaderFunction, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData, useNavigation } from "@remix-run/react";
 import UserHeader from "~/components/auth/UserHeader";
-import SidebarNav from "~/components/sidebar/SidebarNav";
-import { cn } from "~/lib/utils";
+import HomeTabNav from "~/components/tabnav/HomeTabNav";
+import { cn, dictFromHobbies } from "~/lib/utils";
 import { getUser } from "~/services/session.server";
 import { getUserHobbies } from "~/services/user.server";
-import { HobbyDict, HobbyI } from "~/types";
-
-const dictFromHobbies = (hobbies: HobbyI[] | null) => {
-  let hobbiesDict: HobbyDict = {};
-  if (hobbies) {
-    for (let i = 0; i < hobbies.length; i++) {
-      const hobby = hobbies[i];
-      hobbiesDict[hobby.name] = {
-        emoji: hobby.emoji,
-        color: hobby.color,
-      };
-    }
-  }
-  return hobbiesDict;
-};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request);
@@ -49,7 +34,7 @@ export default function App() {
   return (
     <div>
       {data.user && <UserHeader user={data.user} />}
-      <SidebarNav hobbies={data.hobbies} />
+      <HomeTabNav hobbies={data.hobbies} />
       <div className={cn(navigation.state === "loading" && "blur")}>
         <Outlet context={data} />
       </div>
