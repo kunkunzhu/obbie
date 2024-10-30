@@ -5,11 +5,11 @@ import { ReactNode, useState } from "react";
 import { cn } from "~/lib/utils";
 import { HobbyI } from "~/types";
 
-interface SidebarNavI {
+interface HomeTabNavI {
   hobbies: HobbyI[];
 }
 
-interface SidebarNavItemI {
+interface HomeTabNavItemI {
   key: number;
   name: string;
   hobbyType: string;
@@ -17,13 +17,13 @@ interface SidebarNavItemI {
   emoji: string;
 }
 
-function SidebarNavItem({
+function HomeTabNavItem({
   key,
   name,
   hobbyType,
   color,
   emoji,
-}: SidebarNavItemI) {
+}: HomeTabNavItemI) {
   const [isHovered, setIsHovered] = useState(false);
   let redirect = "/home/";
   if (hobbyType) {
@@ -59,12 +59,12 @@ function SidebarNavItem({
   );
 }
 
-export default function SidebarNav({ hobbies }: SidebarNavI) {
+export default function HomeTabNav({ hobbies }: HomeTabNavI) {
   const renderHobbies = (hobbies: HobbyI[]): ReactNode[] => {
     let hobbiesArray: ReactNode[] = [];
     hobbies.map((hobby, index) => {
       hobbiesArray.push(
-        <SidebarNavItem
+        <HomeTabNavItem
           key={index}
           name={hobby.name}
           hobbyType={hobby.name}
@@ -74,14 +74,14 @@ export default function SidebarNav({ hobbies }: SidebarNavI) {
       );
     });
     hobbiesArray.push([
-      <SidebarNavItem
+      <HomeTabNavItem
         key={9}
         name="star"
         hobbyType="star"
         color="transparent"
         emoji="⭐"
       />,
-      <SidebarNavItem
+      <HomeTabNavItem
         key={10}
         name=":)"
         hobbyType="all"
