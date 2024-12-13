@@ -10,8 +10,10 @@ import {
 import { IoMdAdd } from "react-icons/io";
 import { Hobby, User } from "@prisma/client";
 import { useOutletContext } from "@remix-run/react";
-import { MdCancel } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 import { HobbyDict, HobbyI } from "~/types";
+import { useState } from "react";
+import { AddUpdateHobbyDialog } from "~/components/hobby/AddUpdateHobbyDialog";
 
 type ContextType = {
   user: User;
@@ -19,28 +21,62 @@ type ContextType = {
   hobbiesDict: HobbyDict;
 };
 
+function HobbyCard({
+  hobby,
+  index,
+  hobbiesList,
+}: {
+  hobby: HobbyI;
+  index: number;
+  hobbiesList: HobbyI[];
+}) {
+  const [editDialog, setEditDialog] = useState<boolean>(false);
+
+  return (
+    <div key={index}>
+      <Card className="flex flex-row p-2 items-center justify-between w-full min-w-[350px]">
+        <div className="flex flex-row gap-2 items-center">
+          <div className="flex gap-2 text-lg items-center">
+            <div
+              className="rounded-full size-8 flex justify-center items-center border-1"
+              style={{ backgroundColor: hobby.color }}
+            >
+              {hobby.emoji}
+            </div>
+            <div className="truncate max-w-fit">{hobby.name}</div>
+          </div>
+        </div>
+        <MdEdit
+          className="text-secondary cursor-pointer"
+          onClick={() => setEditDialog(true)}
+        />
+      </Card>
+      {editDialog && (
+        <Card className="mt-4 overflow-visible z-40">
+          <AddUpdateHobbyDialog
+            action={() => alert(hobby)}
+            actionText="Update Hobby"
+            curHobbies={hobbiesList}
+            setClose={() => setEditDialog(false)}
+            defaultHobby={hobby}
+            colorPickerStyle="absolute left-[375px]"
+            emojiPickerStyle="absolute left-[375px]"
+          />
+        </Card>
+      )}
+    </div>
+  );
+}
+
 function HobbiesProfileSection({ hobbies }: { hobbies: HobbyI[] }) {
   return (
     <div className="flex flex-row gap-4 py-10 px-6 border-1 rounded-lg bg-white">
-      {hobbies.map((hobby, index) => (
-        <Card
-          key={index}
-          className="flex flex-row p-2 items-center justify-between w-full"
-        >
-          <div className="flex flex-row gap-2 items-center">
-            <div className="flex gap-2 text-lg items-center">
-              <div
-                className="rounded-full size-8 flex justify-center items-center border-1"
-                style={{ backgroundColor: hobby.color }}
-              >
-                {hobby.emoji}
-              </div>
-              <div className="truncate max-w-fit">{hobby.name}</div>
-            </div>
-          </div>
-          <MdCancel className="text-secondary cursor-pointer" />
-        </Card>
-      ))}
+      {hobbies.map((hobby, index) => {
+        const otherHobbies = hobbies.filter((h) => h.name != hobby.name);
+        return (
+          <HobbyCard hobby={hobby} index={index} hobbiesList={otherHobbies} />
+        );
+      })}
       {hobbies.length <= 5 && (
         <Button color="secondary">
           <IoMdAdd />
