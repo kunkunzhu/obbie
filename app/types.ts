@@ -33,7 +33,7 @@ export type SiteConfig = {
   description: string;
 };
 
-type HobbyDictVal = {
+export type HobbyDictVal = {
   emoji: string;
   color: string;
 };
