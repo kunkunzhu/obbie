@@ -71,7 +71,7 @@ export async function addUserHobbies(hobbies: HobbyI[], userId: string) {
 
     // TO DO: add more robust error handling (e.g. when hobby already exists, other errors)
     if (!exists) {
-      const updatedHobby = await prisma.hobby.create({
+      await prisma.hobby.create({
         data: {
           name: hobby.name,
           emoji: hobby.emoji,
@@ -95,6 +95,36 @@ export async function addUserHobbies(hobbies: HobbyI[], userId: string) {
   }
 
   console.log("Hobbies successfully added!");
+
+  return json({ status: 200 });
+}
+
+export async function updateUserHobbies(
+  hobbyName: string,
+  userId: string,
+  updateData: any
+) {
+  if (!userId) {
+    const errorMsg = "No user found.";
+    console.log(errorMsg);
+    return { error: errorMsg, status: 400 }; // TO DO: change to more detailed HTTP error codes
+  }
+
+  const updatedHobby = await prisma.hobby.update({
+    where: {
+      name: hobbyName,
+      userId: userId,
+    },
+    data: updateData,
+  });
+
+  if (!updatedHobby) {
+    const errorMsg = "Hobby update not successful.";
+    console.log(errorMsg);
+    return { error: errorMsg, status: 400 };
+  }
+
+  console.log("Hobbies successfully updated!", updatedHobby);
 
   return json({ status: 200 });
 }

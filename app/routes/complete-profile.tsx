@@ -1,14 +1,11 @@
 /** @format */
 
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
 import {
   Button,
   Card,
   CardBody,
   CardHeader,
   Divider,
-  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -22,9 +19,8 @@ import {
 } from "@remix-run/node";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { useState } from "react";
-import { HexColorPicker } from "react-colorful";
-import { IoIosCloseCircleOutline } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
+import { AddUpdateHobbyDialog } from "~/components/hobby/AddUpdateHobbyDialog";
 import { sampleHobbyList } from "~/lib/sample-data";
 import { requireUserId } from "~/services/session.server";
 import {
@@ -32,154 +28,6 @@ import {
   markUserProfileAsComplete,
 } from "~/services/user.server";
 import { ActionData, HobbyI } from "~/types";
-
-function AddHobby({
-  addHobby,
-  curHobbies,
-  setClose,
-}: {
-  addHobby: (hobby: HobbyI) => void;
-  curHobbies: HobbyI[];
-  setClose: () => void;
-}) {
-  const [emojiPicker, showEmojiPicker] = useState<Boolean>(false);
-  const [colorPicker, showColorPicker] = useState<Boolean>(false);
-  const [emoji, setEmoji] = useState<string>("🌟");
-  const [hobbyName, setHobbyName] = useState<string>("");
-  const [hobbyColor, setHobbyColor] = useState<string>("#aee2cd");
-  const [error, setError] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string>("");
-
-  const handleEmojiSelect = (emoji: any) => {
-    console.log("Selected emoji:", emoji);
-    setEmoji(emoji.native);
-    showEmojiPicker(false);
-  };
-
-  const checkHobbyExists = (hobby: HobbyI) => {
-    for (let i = 0; i < curHobbies.length; i++) {
-      if (
-        curHobbies[i].emoji == hobby.emoji ||
-        curHobbies[i].name == hobby.name ||
-        curHobbies[i].color == hobby.color
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const openEmojiPicker = () => {
-    setError(false);
-    showEmojiPicker(true);
-    showColorPicker(false);
-  };
-
-  const openColorPicker = () => {
-    setError(false);
-    showColorPicker(true);
-    showEmojiPicker(false);
-  };
-
-  const closeEmojiPicker = () => {
-    showEmojiPicker(false);
-  };
-
-  const closeColorPicker = () => {
-    showColorPicker(false);
-  };
-
-  const handleCancel = () => {
-    setHobbyName("");
-    setEmoji("🌟");
-    setError(false);
-    setClose();
-  };
-
-  const handleAddEmoji = () => {
-    if (!hobbyName) {
-      setError(true);
-      setErrorMsg("Hobby name cannot be empty.");
-      return;
-    }
-
-    const hobby = {
-      emoji: emoji,
-      name: hobbyName,
-      color: hobbyColor,
-    };
-
-    const isUnique = checkHobbyExists(hobby);
-    if (!isUnique) {
-      setError(true);
-      setErrorMsg(
-        "Looks like there already exists a hobby with this name or emoji!"
-      );
-      return;
-    }
-    addHobby(hobby);
-    setClose();
-  };
-
-  return (
-    <div className="flex flex-col gap-4 py-4 px-2 min-w-[350px]">
-      <div className="flex gap-4 w-full items-center align-middle">
-        <Input
-          label="Hobby"
-          name="hobby"
-          variant="bordered"
-          isInvalid={error}
-          errorMessage={errorMsg}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => {
-            setError(false);
-            setErrorMsg("");
-            setHobbyName(e.currentTarget.value);
-          }}
-        />
-        <div
-          className="h-8 w-10 border-1 rounded-full cursor-pointer"
-          style={{ backgroundColor: hobbyColor }}
-          onClick={openColorPicker}
-        />
-        <div
-          className="text-2xl hover:scale-125 transition-all cursor-pointer"
-          onClick={openEmojiPicker}
-        >
-          {emoji}
-        </div>
-
-        {emojiPicker && (
-          <div className="absolute left-[375px] border-2 pt-8 bg-white border-primary rounded-xl">
-            <IoIosCloseCircleOutline
-              className="absolute top-1 right-1 size-6 cursor-pointer"
-              onClick={closeEmojiPicker}
-            />
-            <Picker
-              data={data}
-              onEmojiSelect={handleEmojiSelect}
-              maxFrequentRows={0}
-            />
-          </div>
-        )}
-        {colorPicker && (
-          <div className="absolute left-[375px] border-2 pt-8 bg-white border-primary rounded-xl">
-            <IoIosCloseCircleOutline
-              className="absolute top-1 right-1 size-6 cursor-pointer"
-              onClick={closeColorPicker}
-            />
-            <HexColorPicker color={hobbyColor} onChange={setHobbyColor} />
-          </div>
-        )}
-      </div>
-      <div className="w-full mx-auto flex justify-between items-center">
-        <Button onClick={handleCancel}>Cancel</Button>
-        <Button color="primary" onClick={handleAddEmoji}>
-          Add Hobby
-        </Button>
-      </div>
-    </div>
-  );
-}
 
 function HobbyList({
   hobbies,
@@ -311,10 +159,18 @@ export default function CompleteProfile() {
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent>
-                    <AddHobby
-                      addHobby={hobbyListAdd}
+                    <AddUpdateHobbyDialog
+                      action={hobbyListAdd}
+                      actionText="Add Hobby"
                       curHobbies={hobbyList}
                       setClose={() => setAddDialog(false)}
+                      defaultHobby={{
+                        name: "",
+                        emoji: "🌟",
+                        color: "#aee2cd",
+                      }}
+                      emojiPickerStyle="absolute left-[375px]"
+                      colorPickerStyle="absolute left-[375px] "
                     />
                   </PopoverContent>
                 </Popover>
